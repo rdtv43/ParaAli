@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti, Ali</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #fac3d5, #2c10ff);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .heart-container {
+            position: relative;
+            height: 100px;
+            margin-bottom: 10px;
+            width: 100px;
+        }
+
+        .heart {
+            position: relative;
+            width: 100px;
+            height: 90px;
+            animation: heartbeat 1.2s infinite;
+            margin: 0 auto;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            background: linear-gradient(45deg, #e90cf9, #2c10ff);
+            border-radius: 50px 50px 0 0;
+            box-shadow: 0 0 30px rgba(56, 66, 255, 0.6);
+        }
+
+        .heart::before {
+            left: 50px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .heart.reflection {
+            position: absolute;
+            top: 110%;
+            left: 50%;
+            transform: translateX(-50%) scaleY(-0.6);
+            opacity: 0.3;
+            filter: blur(1px);
+        }
+
+        .name {
+            color: #2121ff;
+            font-size: clamp(24px, 5vw, 32px);
+            text-shadow: 0 0 15px rgba(213, 62, 255, 0.829);
+            animation: heartbeat 1.2s infinite;
+            margin: 0;
+        }
+
+        .text {
+            color: #6717cf;
+            font-size: clamp(16px, 4vw, 20px);
+            max-width: 90%;
+            margin: 0 auto;
+            text-shadow: 0 0 15px rgba(218, 120, 245, 0.829);
+            line-height: 1.5;
+        }
+
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+            margin-top: 20px;
+        }
+
+        #music-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff00ff, #6717cf);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.05); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.05); }
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 56, 96, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heart-container">
+            <div class="heart"></div>
+            <div class="heart reflection"></div>
+        </div>
+        <h1 class="name">Para ti</h1>
+        <div class="text">
+            <p>Se la luz ante la oscuridad envolvente ante la vida, como el sol ante las mañanas</p>
+            <p>¿Son tus ojos los que brillan?, o ¿Es tu sonrisa que te hace brillar?</p>
+            <p>Tan colorida, tan única, tan espléndida. Eres tú el ser que tanto me enamora</p>
+            <strong>Te amo Ali</strong>
+        </div>
+        <picture>
+            <source srcset="943857fab078d124c426ab4e83d8caa8.webp" type="image/webp">
+            <img class="profile-img" src="943857fab078d124c426ab4e83d8caa8.jpg" alt="Imagen de Ali" loading="lazy">
+        </picture>
+    </div>
+
+    <button id="music-button">Reproducir Música</button>
+    <audio id="background-music" loop preload="metadata">
+        <source src="Ghost-He-Is.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            const musicButton = document.getElementById('music-button');
+            const backgroundMusic = document.getElementById('background-music');
+
+            // Verificar si el navegador admite WebP
+            function supportsWebP() {
+                const elem = document.createElement('canvas');
+                if (!!(elem.getContext && elem.getContext('2d'))) {
+                    return elem.toDataURL('image/webp').indexOf('data:image/webp') == 0;
+                }
+                return false;
+            }
+
+            // Cargar música solo después de interacción del usuario
+            let audioAllowed = false;
+            
+            function enableAudio() {
+                audioAllowed = true;
+                document.body.removeEventListener('click', enableAudio);
+            }
+            
+            document.body.addEventListener('click', enableAudio);
+
+            function createParticle(x, y) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 8 + 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 60 + 40;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                container.appendChild(particle);
+
+                const startTime = Date.now();
+                function animate() {
+                    const time = (Date.now() - startTime) / 1000;
+                    if (time > 1.5) {
+                        particle.remove();
+                        return;
+                    }
+                    particle.style.opacity = 1 - (time / 1.5);
+                    particle.style.transform = `translate(
+                        ${Math.cos(angle) * velocity * time}px,
+                        ${Math.sin(angle) * velocity * time - 0.5 * 980 * time * time}px
+                    )`;
+                    requestAnimationFrame(animate);
+                }
+                requestAnimationFrame(animate);
+            }
+
+            container.addEventListener('click', (e) => {
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                for(let i = 0; i < 25; i++) {
+                    createParticle(centerX, centerY);
+                }
+            });
+
+            musicButton.addEventListener('click', () => {
+                if (!audioAllowed) {
+                    alert("Por favor, haz clic primero en cualquier parte de la página para activar el audio.");
+                    return;
+                }
+                
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play()
+                        .then(() => musicButton.textContent = 'Música ON')
+                        .catch(e => console.error("Error al reproducir:", e));
+                } else {
+                    backgroundMusic.pause();
+                    musicButton.textContent = 'Reproducir Música';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
