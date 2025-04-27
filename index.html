@@ -16,6 +16,21 @@
             overflow-x: hidden;
             padding: 20px;
         }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%),
+                url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><circle cx="10%" cy="20%" r="1" fill="white" opacity="0.7"/><circle cx="80%" cy="50%" r="1" fill="white" opacity="0.5"/><circle cx="50%" cy="80%" r="1" fill="white" opacity="0.3"/><circle cx="30%" cy="30%" r="1" fill="white" opacity="0.6"/><circle cx="90%" cy="10%" r="1" fill="white" opacity="0.4"/></svg>');
+            background-repeat: repeat;
+            background-size: cover;
+            z-index: -20;
+            opacity: 0.5;
+        }
 
         .container {
             display: flex;
@@ -89,14 +104,27 @@
         }
 
         .text {
-            color: #6717cf;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #b983ff;
             font-size: clamp(16px, 4vw, 20px);
             max-width: 90%;
             margin: 0 auto;
+            text-align: center;
             text-shadow: 0 0 15px rgba(218, 120, 245, 0.829);
-            line-height: 1.5;
-            transition: all 0.3s ease;
-            
+            line-height: 1.6;
+            gap: 15px; /* Separación entre párrafos */
+            overflow: hidden;
+            padding: 10px;
+        }
+        
+        .text p {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+            max-width: 600px;
         }
         .typed-text {
             overflow: hidden;
@@ -280,12 +308,25 @@
                     }, 3000 + (index * 1500));
                 }
             });
+            document.addEventListener('DOMContentLoaded', function() {
+                const paragraphs = document.querySelectorAll('.text p');
+                let delay = 0;
+                
+                paragraphs.forEach((p, index) => {
+                    setTimeout(() => {
+                        p.style.opacity = '1';
+                        p.style.transform = 'translateY(0)';
+                    }, delay);
+            
+                    delay += 2000; // Tiempo entre párrafos (en milisegundos)
+                });
+            });
     
             setInterval(() => {
                 const x = Math.random() * window.innerWidth;
                 const y = Math.random() * window.innerHeight;
                 createParticle(x, y);
-            }, 8);
+            }, 300);
         });
     </script>
     
