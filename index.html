@@ -41,6 +41,7 @@
             height: 90px;
             animation: heartbeat 1.2s infinite;
             margin: 0 auto;
+            filter: drop-shadow(0 0 15px rgba(233, 12, 249, 0.8));
         }
 
         .heart::before,
@@ -49,9 +50,11 @@
             position: absolute;
             width: 50px;
             height: 80px;
-            background: linear-gradient(45deg, #e90cf9, #2c10ff);
+            background: linear-gradient(45deg, #ff00ff, #8a2be2);
             border-radius: 50px 50px 0 0;
-            box-shadow: 0 0 30px rgba(56, 66, 255, 0.6);
+            box-shadow: 
+            0 0 20px rgba(255, 0, 255, 0.8),
+            inset -5px -5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .heart::before {
@@ -81,6 +84,8 @@
             text-shadow: 0 0 15px rgba(213, 62, 255, 0.829);
             animation: heartbeat 1.2s infinite;
             margin: 0;
+            animation: vibrate 0.5s infinite alternate;
+            font-weight: bold;
         }
 
         .text {
@@ -90,6 +95,14 @@
             margin: 0 auto;
             text-shadow: 0 0 15px rgba(218, 120, 245, 0.829);
             line-height: 1.5;
+            transition: all 0.3s ease;
+            
+        }
+        .typed-text {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #ff00ff;
+            animation: typing 3s steps(40) 1s 1 normal both, blink-caret 0.75s step-end infinite;
         }
 
         .profile-img {
@@ -100,6 +113,8 @@
             border: 3px solid #ff00ff;
             box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
             margin-top: 20px;
+            animation: float 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(233, 12, 249, 0.8));
         }
 
         #music-button {
@@ -115,6 +130,9 @@
             box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
             z-index: 1000;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         @keyframes heartbeat {
@@ -123,13 +141,27 @@
             50% { transform: scale(1.1); }
             75% { transform: scale(1.05); }
         }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ff00ff }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
 
         .particle {
             position: absolute;
-            background: rgba(255, 56, 96, 0.8);
-            border-radius: 50%;
+            border-radius: 500%;
             pointer-events: none;
-            z-index: -1;
+            z-index: -10;
+            animation: particle-animation 1s forwards;
         }
     </style>
 </head>
@@ -141,15 +173,27 @@
         </div>
         <h1 class="name">Para ti</h1>
         <div class="text">
-            <p>Se la luz ante la oscuridad envolvente ante la vida, como el sol ante las mañanas</p>
+            <p class="type-text">Se la luz ante la oscuridad envolvente ante la vida, como el sol ante las mañanas</p>
             <p>¿Son tus ojos los que brillan?, o ¿Es tu sonrisa que te hace brillar?</p>
             <p>Tan colorida, tan única, tan espléndida. Eres tú el ser que tanto me enamora</p>
+            <p>Tu risa es la melodía que alegra mis días, y tu amor es el refugio que siempre busqué</p>
+            <p>Tu esencia es la fragancia que embriaga mi alma, y tu abrazo es el hogar donde siempre quiero estar</p> 
+            <p>No hay noche en la que no te piense como si fuera la ultima de mis noches</p>
+            <p>Tu amor es el fuego que arde en mi corazón, y tu presencia es la paz que calma mis tormentas</p>
+            <p>Tu voz es la canción que resuena en mi mente, y tu risa es la melodía que alegra mis días</p>
+            
             <strong>Te amo Ali</strong>
         </div>
         <picture>
             <source srcset="943857fab078d124c426ab4e83d8caa8.webp" type="image/webp">
             <img class="profile-img" src="943857fab078d124c426ab4e83d8caa8.jpg" alt="Imagen de Ali" loading="lazy">
         </picture>
+    </div>
+    <div class="text">
+        <p>Gracias por llegar deseo tanto recorrer un gran camino contigo</p>
+        <p>tal vez esto no sea la gran cosa pero muchas veces deseo poder abrirme de una forma linda contigo</p>
+        <p>y que puedas ver lo que siento por ti, y lo que eres para mí</p>
+        <p>Te amo tanto, y espero que esto te haga sonreír</p>
     </div>
 
     <button id="music-button">Reproducir Música</button>
@@ -163,8 +207,7 @@
             const container = document.querySelector('.container');
             const musicButton = document.getElementById('music-button');
             const backgroundMusic = document.getElementById('background-music');
-
-            // Verificar si el navegador admite WebP
+    
             function supportsWebP() {
                 const elem = document.createElement('canvas');
                 if (!!(elem.getContext && elem.getContext('2d'))) {
@@ -172,46 +215,36 @@
                 }
                 return false;
             }
-
-            // Cargar música solo después de interacción del usuario
+    
             let audioAllowed = false;
-            
             function enableAudio() {
                 audioAllowed = true;
                 document.body.removeEventListener('click', enableAudio);
             }
-            
             document.body.addEventListener('click', enableAudio);
-
+    
             function createParticle(x, y) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-                const size = Math.random() * 8 + 3;
+                const size = Math.random() * 10 + 5;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 60 + 40;
+                particle.style.background = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
                 particle.style.left = `${x}px`;
                 particle.style.top = `${y}px`;
-                container.appendChild(particle);
-
-                const startTime = Date.now();
-                function animate() {
-                    const time = (Date.now() - startTime) / 1000;
-                    if (time > 1.5) {
-                        particle.remove();
-                        return;
-                    }
-                    particle.style.opacity = 1 - (time / 1.5);
-                    particle.style.transform = `translate(
-                        ${Math.cos(angle) * velocity * time}px,
-                        ${Math.sin(angle) * velocity * time - 0.5 * 980 * time * time}px
-                    )`;
-                    requestAnimationFrame(animate);
-                }
-                requestAnimationFrame(animate);
+                document.body.appendChild(particle);
+    
+                const animation = particle.animate([
+                    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 + 100}px) rotate(360deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                });
+    
+                animation.onfinish = () => particle.remove();
             }
-
+    
             container.addEventListener('click', (e) => {
                 const rect = container.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2;
@@ -220,23 +253,41 @@
                     createParticle(centerX, centerY);
                 }
             });
-
+    
             musicButton.addEventListener('click', () => {
                 if (!audioAllowed) {
                     alert("Por favor, haz clic primero en cualquier parte de la página para activar el audio.");
                     return;
                 }
-                
+    
                 if (backgroundMusic.paused) {
                     backgroundMusic.play()
-                        .then(() => musicButton.textContent = 'Música ON')
+                        .then(() => musicButton.innerHTML = '<i class="fas fa-heart"></i> Música ON')
                         .catch(e => console.error("Error al reproducir:", e));
                 } else {
                     backgroundMusic.pause();
-                    musicButton.textContent = 'Reproducir Música';
+                    musicButton.innerHTML = '<i class="fas fa-heart"></i> Música';
                 }
             });
+    
+            const paragraphs = document.querySelectorAll('.text p');
+            paragraphs.forEach((p, index) => {
+                if (index > 0) {
+                    p.style.opacity = '0';
+                    setTimeout(() => {
+                        p.style.transition = 'opacity 1s ease';
+                        p.style.opacity = '1';
+                    }, 3000 + (index * 1500));
+                }
+            });
+    
+            setInterval(() => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                createParticle(x, y);
+            }, 8);
         });
     </script>
+    
 </body>
 </html>
